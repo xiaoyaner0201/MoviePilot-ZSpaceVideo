@@ -1,0 +1,28 @@
+name: check
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Unit tests
+        run: |
+          python -m pip install --quiet 'pytest>=8'
+          python -m pytest -q tests
+      - name: Plugin index matches plugin version
+        run: |
+          python - <<'PY'
+          import json, re, pathlib
+          idx = json.loads(pathlib.Path('package.v3.json').read_text())['ZSpaceVideo']['version']
+          src = pathlib.Path('plugins.v3/zspacevideo/__init__.py').read_text()
+          ver = re.search(r'plugin_version = "([^"]+)"', src).group(1)
+          assert idx == ver, (idx, ver)
+          assert pathlib.Path('plugins.v3/zspacevideo/dist/assets/remoteEntry.js').exists(), 'dist 未构建'
+          print('version', ver)
+          PY
