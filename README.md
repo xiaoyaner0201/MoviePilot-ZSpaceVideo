@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/images/banner.jpg" width="900" alt="极空间影视 · ZSpace Video for MoviePilot"></p>
+
 <div align="center">
 
 # 🎬 极空间影视 · MoviePilot 插件
@@ -144,6 +146,8 @@ npm run build
 
 [GPL-3.0](LICENSE)，与 MoviePilot-Plugins 一致。
 
+本项目非极空间官方出品，极空间及其产品外观为其所有者的商标。
+
 <details>
 <summary>English</summary>
 
@@ -286,5 +290,7 @@ The layout follows the V3 conventions of [MoviePilot-Plugins](https://github.com
 ## 📄 License
 
 [GPL-3.0](LICENSE), same as MoviePilot-Plugins.
+
+This project is not made by or affiliated with ZSpace. ZSpace and the look of its products are trademarks of their respective owners.
 
 </details>
