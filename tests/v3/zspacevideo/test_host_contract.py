@@ -121,3 +121,19 @@ class TestPruneDir:
         assert not season.exists()
         assert (root / "样剧" / "notes.pdf").exists()
         assert root.is_dir()
+
+    def test_boundary_lookup_failure_prunes_nothing(self, tmp_path, monkeypatch):
+        from app.application.directory import DirectoryHelper
+        from app.plugins.zspacevideo import host as H
+        from app.plugins.zspacevideo.core import watched as W
+
+        root = tmp_path / "media"
+        season = root / "TV" / "样剧" / "Season 1"
+        season.mkdir(parents=True)
+        monkeypatch.setattr(H, "library_roots", lambda: W.Roots(library=[str(root)], download=[]))
+
+        def boom(self, item):
+            raise RuntimeError("目录配置读不到")
+        monkeypatch.setattr(DirectoryHelper, "get_media_cleanup_root", boom)
+        H.prune_dir(str(season))
+        assert season.is_dir()

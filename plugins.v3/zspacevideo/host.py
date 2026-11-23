@@ -177,10 +177,12 @@ def prune_dir(path: str) -> None:
     boundaries = [str(p) for p in library_roots().library]
     try:
         root = DirectoryHelper().get_media_cleanup_root(item)
-        if root:
-            boundaries.append(str(root))
     except Exception as error:  # noqa: BLE001
-        logger.debug(f"极空间影视：读取媒体库清理边界失败：{error}")
+        # 读不到分类边界就不清理：宁可留几个空目录，也不能删掉分类目录
+        logger.warning(f"极空间影视：读取媒体库清理边界失败，不清理空目录：{error}")
+        return
+    if root:
+        boundaries.append(str(root))
     for removed in W.prune_empty_dirs(path, boundaries):
         logger.info(f"极空间影视：删除空目录 {removed}")
 
