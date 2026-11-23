@@ -186,7 +186,7 @@ class StaleSeenAutoTest:
             src_dir, src, dest = fx.add_version("WEB")
             fake = FakeHost([tor("t1", src_dir)])
             transfers = [{"id": 1, "status": True, "src": str(src), "dest": str(dest), "download_hash": "t1"}]
-            host = WatchHost(transfers_by_tmdb=lambda tid, kind: transfers, downloads_by_tmdb=lambda tid: [],
+            host = WatchHost(transfers_by_tmdb=lambda tid, kind: transfers, downloads_by_tmdb=lambda tid, kind: [],
                              torrents=lambda: list(fake.torrents.values()),
                              torrent_files=lambda t: _list_media(t.content_path), roots=lambda: fx.roots,
                              exec_host=lambda: fake, rescan=lambda p, w: [])
@@ -202,6 +202,12 @@ class StaleSeenAutoTest:
             out = svc.run_auto()
             assert out["results"] == []
             assert src.exists() and dest.exists()
+            assert not svc.state["movie:11"].get("last_error"), svc.state["movie:11"]  # 是被跳过，不是预览出错
+            # 对照：同样的条目下次读成功、确认仍是已看，过了缓冲期就会删
+            cli.fail = set()
+            now[0] = 31 * DAY
+            out = svc.run_auto()
+            assert [r["status"] for r in out["results"]] == ["done"]
         finally:
             fx.cleanup()
 
