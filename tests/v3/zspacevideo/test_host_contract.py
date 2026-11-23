@@ -117,6 +117,8 @@ class TestPruneDir:
         season.mkdir(parents=True)
         (root / "样剧" / "notes.pdf").write_bytes(b"p")
         monkeypatch.setattr(H, "library_roots", lambda: W.Roots(library=[str(root)], download=[]))
+        from app.application.directory import DirectoryHelper
+        monkeypatch.setattr(DirectoryHelper, "get_media_cleanup_root", lambda self, item: root)
         H.prune_dir(str(season))
         assert not season.exists()
         assert (root / "样剧" / "notes.pdf").exists()
