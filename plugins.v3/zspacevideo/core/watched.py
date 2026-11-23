@@ -903,9 +903,10 @@ def execute_plan(plan: Plan, host: Host, now: float, wait_seconds: float = 120.0
                     if time.monotonic() >= deadline:
                         break
                     host.sleep(poll)
+                # 以最后一次读回为准：每个 hash 只在「已删」或「失败」其中一个列表里
                 left = {t.hash for t in host.list_torrents(hashes)}
                 result["torrents_removed"] = [h for h in hashes if h not in left]
-                result["torrents_failed"] = sorted(set(result["torrents_failed"]) | left)
+                result["torrents_failed"] = sorted(left)
                 qb_clear = not left
             except Exception as error:  # noqa: BLE001
                 qb_clear = False
