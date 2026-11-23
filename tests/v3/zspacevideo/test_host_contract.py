@@ -103,3 +103,21 @@ class TestApiDeclaration:
             assert isinstance(entry["methods"], list) and entry["methods"]
             assert entry["auth"] == "bear"
             assert entry.get("summary")
+
+
+class TestPruneDir:
+    """删完库入口后清空目录：上级目录里有别的文件（如 pdf）时只删空的那一层。"""
+
+    def test_parent_with_unknown_file_kept(self, tmp_path, monkeypatch):
+        from app.plugins.zspacevideo import host as H
+        from app.plugins.zspacevideo.core import watched as W
+
+        root = tmp_path / "tv"
+        season = root / "样剧" / "Season 1"
+        season.mkdir(parents=True)
+        (root / "样剧" / "notes.pdf").write_bytes(b"p")
+        monkeypatch.setattr(H, "library_roots", lambda: W.Roots(library=[str(root)], download=[]))
+        H.prune_dir(str(season))
+        assert not season.exists()
+        assert (root / "样剧" / "notes.pdf").exists()
+        assert root.is_dir()

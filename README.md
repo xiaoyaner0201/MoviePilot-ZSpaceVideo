@@ -102,6 +102,7 @@ services:
 - 自动删除只处理打开开关之后才首次看完的条目，之前已经看过的只能手动删。缓冲期内在极空间客户端取消「已看」，就不会被删。
 - qB 任务没删掉（qB 拒绝、超时或读不到）时，做种源文件一律保留，结果标为「部分完成」。
 - 影片目录删完视频后，只在剩下的全是 nfo/海报/字幕时一起清掉；有任何别的文件就整个目录不动。
+- 之后往上清理空目录时，每一层都只删真正空的目录，到媒体库的分类目录为止。
 - 读极影视失败时保留的已看条目、一个已看标记推出多个季的专辑，都只能手动删，自动删除会跳过。
 - 专辑里的文件被删光时，极影视会连同专辑和观看记录一起删除，这是极影视自己的行为。
 
@@ -244,6 +245,7 @@ Turn on "read ZSpace watched state periodically" in the settings. Try deletion b
 - Automatic deletion only handles titles first seen as watched after you enabled it; anything watched earlier must be deleted by hand. Un-marking "watched" in the ZSpace client during the buffer period cancels the deletion.
 - If a qBittorrent task is not removed (refused, timed out or unreadable), its seeding files are kept and the result is marked partial.
 - After the last video in a movie folder is deleted, the folder is cleaned only if everything left is .nfo, artwork or subtitles; any other file keeps the whole folder.
+- Empty parent folders are then removed one level at a time, only while truly empty, stopping at the library category folder.
 - Watched entries kept after a failed library read, and albums whose single watched mark spans several seasons, can only be deleted by hand; automatic deletion skips them.
 - When every file of an album is gone, ZSpace's video library removes the album and its watch history; this is ZSpace's own behavior.
 
