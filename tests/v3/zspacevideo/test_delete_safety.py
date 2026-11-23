@@ -76,6 +76,18 @@ class TorrentFailureTest:
         assert self.src.exists()
         assert any("qB" in x for x in result["failed"])
 
+    def test_refused_but_gone_counts_once(self):
+        torrents = [tor("t1", self.src_dir)]
+        plan = full_plan(self.fx, self.entry, self.transfers, torrents)
+
+        class Host(FakeHost):
+            def _del_t(self, hashes):  # 报失败，但实际删掉了
+                FakeHost._del_t(self, hashes)
+                return False
+        result = W.execute_plan(plan, Host(torrents), now=1.0, wait_seconds=0, poll=0)
+        assert result["torrents_removed"] == ["t1"]
+        assert result["torrents_failed"] == []
+
 
 class SidecarWhitelistTest:
     def test_unknown_file_keeps_whole_folder(self):
